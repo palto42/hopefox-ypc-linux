@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from math import ceil
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -77,7 +76,7 @@ class _PreviewMixin:
             # to exist for every rotation.  Render into a FIXED square canvas
             # so the visible circle never changes size at 0/45/90 degrees.
             if self.nocrop_button.isChecked():
-                side = ceil(2**0.5 * max(pixmap.width(), pixmap.height()))
+                side = int(2**0.5 * max(pixmap.width(), pixmap.height()) + 0.5)
             else:
                 side = min(pixmap.width(), pixmap.height())
             rotated = QPixmap(side, side)
