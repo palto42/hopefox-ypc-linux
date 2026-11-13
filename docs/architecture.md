@@ -11,6 +11,14 @@ optional and is not required for preview, LED control, rotation or recording.
 
 Both receive backends feed the same UDP/video parser.
 
+## Code layout
+
+The `soulear_camera.camera` package exposes `SoulearCamera` as the camera
+facade. Its internal modules group socket and capture setup, protocol commands,
+packet decoding, video reassembly and publishing, recording, and lifecycle
+management. `soulear_camera.ui` exposes `MainWindow`, with preview rendering
+separated from window setup and controls.
+
 ## Threads
 
 The client separates:
