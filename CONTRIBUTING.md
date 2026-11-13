@@ -2,6 +2,8 @@
 
 Contributions and test results from related Hopefox, Soulear/YPC and apparently identical rebranded camera revisions are welcome.
 
+See [AGENTS.md](./AGENTS.md) for development setup, coding guidelines, and verification commands.
+
 Useful reports include:
 
 - camera identification/status string
