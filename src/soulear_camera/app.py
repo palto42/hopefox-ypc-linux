@@ -3,6 +3,7 @@
 import argparse
 import logging
 import signal
+import socket
 import sys
 from importlib.metadata import PackageNotFoundError, version
 
@@ -48,8 +49,8 @@ def main() -> None:
     )
     parser.add_argument(
         "--local-ip",
-        default="192.168.1.10",
-        help="Local IPv4 address used for UDP sockets (default: 192.168.1.10)",
+        default=None,
+        help="Local IPv4 address used for UDP sockets (default: detected via the route to --camera-ip)",
     )
     parser.add_argument(
         "--camera-ip",
@@ -91,6 +92,15 @@ def main() -> None:
     )
     if args.loglevel != "DEBUG":
         QLoggingCategory.setFilterRules("qt.qpa.wayland.textinput.warning=false")
+
+    if args.local_ip is None:
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+                sock.connect((args.camera_ip, 9))
+                args.local_ip = sock.getsockname()[0]
+        except OSError as exc:
+            parser.error(f"Could not detect local IP address: {exc}")
+        logging.info("Detected local IP address: %s", args.local_ip)
 
     app = QApplication(sys.argv)
     window = MainWindow(args)

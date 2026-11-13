@@ -8,7 +8,7 @@ exclude-newer-span = "P3D"
 
 [[package]]
 name = "hopefox-ypc-linux"
-version = "0.1.1"
+version = "0.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "pyside6" },
