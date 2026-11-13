@@ -5,7 +5,7 @@ import threading
 
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QCloseEvent
-from PySide6.QtWidgets import QHBoxLayout, QLabel, QMainWindow, QPushButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QMainWindow, QPushButton, QSlider, QVBoxLayout, QWidget
 
 from ..camera import Signals, SoulearCamera
 from .preview import _PreviewMixin
@@ -62,8 +62,33 @@ class MainWindow(_PreviewMixin, QMainWindow):
         button_layout.addWidget(self.auto_rotate_button)
         button_layout.addStretch()
 
+        self.offset_slider = QSlider(Qt.Orientation.Vertical)
+        self.offset_slider.setRange(-180, 180)
+        self.offset_slider.setEnabled(self.auto_rotate_button.isChecked())
+
+        self.nocrop_button = QPushButton("●")
+        self.nocrop_button.setCheckable(True)
+        self.nocrop_button.setChecked(False)
+        self.nocrop_button.toggled.connect(lambda checked: self.nocrop_button.setText("■" if checked else "●"))
+        self.nocrop_button.setEnabled(self.auto_rotate_button.isChecked())
+
+        self.flip_button = QPushButton("↔")
+        self.flip_button.setCheckable(True)
+        self.flip_button.setChecked(False)
+        self.flip_button.toggled.connect(lambda checked: self.flip_button.setText("⇄" if checked else "↔"))
+
+        slider_layout = QVBoxLayout()
+        slider_layout.addWidget(self.offset_slider, stretch=1)
+        slider_layout.addWidget(self.nocrop_button)
+        slider_layout.addWidget(self.flip_button)
+
+        image_layout = QHBoxLayout()
+        image_layout.addLayout(slider_layout)
+        image_layout.addWidget(self.image_label, stretch=1)
+
         layout = QVBoxLayout()
-        layout.addWidget(self.image_label, stretch=1)
+        # layout.addWidget(self.image_label, stretch=1)
+        layout.addLayout(image_layout, stretch=1)
         layout.addWidget(self.status_label)
         layout.addWidget(self.stats_label)
         layout.addLayout(button_layout)
@@ -195,6 +220,8 @@ class MainWindow(_PreviewMixin, QMainWindow):
             return
 
         self.camera.auto_rotate = bool(enabled)
+        self.offset_slider.setEnabled(bool(enabled))
+        self.nocrop_button.setEnabled(bool(enabled))
         if enabled:
             self.camera.auto_rotate_zero = self.camera.last_camera_angle
         else:

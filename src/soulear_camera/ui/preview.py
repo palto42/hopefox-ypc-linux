@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from math import ceil
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -69,13 +70,16 @@ class _PreviewMixin:
             self.camera.logger.error("Qt could not decode JPEG frame")
             return
 
-        pixmap = QPixmap.fromImage(image)
+        pixmap = QPixmap.fromImage(image.mirrored(self.flip_button.isChecked(), False))
 
         if self.camera.auto_rotate and camera_angle is not None:
             #  show only the centered circular region that is guaranteed
             # to exist for every rotation.  Render into a FIXED square canvas
             # so the visible circle never changes size at 0/45/90 degrees.
-            side = min(pixmap.width(), pixmap.height())
+            if self.nocrop_button.isChecked():
+                side = ceil(2**0.5 * max(pixmap.width(), pixmap.height()))
+            else:
+                side = min(pixmap.width(), pixmap.height())
             rotated = QPixmap(side, side)
             rotated.fill(Qt.GlobalColor.transparent)
 
@@ -87,7 +91,7 @@ class _PreviewMixin:
             painter.setClipPath(clip)
 
             painter.translate(side / 2.0, side / 2.0)
-            painter.rotate(-float(camera_angle))
+            painter.rotate(-float(camera_angle) + self.offset_slider.value())
             painter.drawPixmap(
                 int(-pixmap.width() / 2),
                 int(-pixmap.height() / 2),
