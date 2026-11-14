@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=PenCam
+Comment=Linux client for Hopefox Soulear/YPC Wi-Fi inspection cameras
+Exec=soulear-camera
+Icon=pencam
+Terminal=false
+Categories=AudioVideo;Video;

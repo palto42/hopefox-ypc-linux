@@ -105,6 +105,45 @@ uv sync
 uv run soulear-camera
 ```
 
+## Install as a user tool
+
+Install the app from this repository with `uv tool`:
+
+```bash
+uv tool install 'git+https://github.com/palto42/hopefox-ypc-linux'
+```
+
+This installs the `soulear-camera` command and its Python dependencies in an
+isolated tool environment. The `ffmpeg` system package is still needed for
+recording, but not for preview or photo capture. Check the command without
+connecting to a camera:
+
+```bash
+soulear-camera --help
+```
+
+To add an application-menu entry and its icon, install both files:
+
+```bash
+install -Dm644 packaging/pencam.desktop \
+  "$HOME/.local/share/applications/pencam.desktop"
+install -Dm644 packaging/pencam.svg \
+  "$HOME/.local/share/icons/hicolor/scalable/apps/pencam.svg"
+```
+
+Desktop launchers may not inherit the shell's `PATH`. For reliable launching,
+edit the installed file's `Exec` line to use the absolute path to the command.
+Find the `uv tool` executable directory with:
+
+```bash
+uv tool dir --bin
+```
+
+For example, if that prints `/home/alice/.local/bin`, set the line to
+`Exec=/home/alice/.local/bin/soulear-camera`. Do not use `~` in the path.
+The desktop entry refers to the icon by the name `pencam`, matching the
+installed SVG filename.
+
 ## Optional packet capture
 
 Normal use does not require a Wi-Fi interface name. For deeper diagnostics you can
